@@ -64,7 +64,7 @@ class Camera:
 
     def _start(self):
         print("Starting camera...")
-        self._cam.start()
+        #self._cam.start()
         print("Camera started")
         self.is_started = True
 
