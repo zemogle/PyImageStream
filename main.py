@@ -10,8 +10,9 @@ import tornado.websocket
 
 from PIL import Image
 
-import pygame.camera
-import pygame.image
+# import pygame.camera
+# import pygame.image
+import picamera
 
 parser = argparse.ArgumentParser(description='Start the PyImageStream server.')
 
