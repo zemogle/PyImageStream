@@ -44,17 +44,7 @@ class Camera:
         self.quality = quality
         self.stopdelay = stopdelay
         time.sleep(2)
-        if datetime.now().hour > 11 or datetime.now().hour < 15:
-            self._cam.iso = 800
-            self._cam.exposure_mode = 'night'
-            self._cam.awb_mode = 'auto'
-            # self._cam.awb_gains = (Fraction(19, 16), Fraction(143, 128))
-            self._cam.shutter_speed = 400000
-        else:
-            self._cam.iso = 100
-            self._cam.exposure_mode = 'auto'
-            self._cam.awb_mode = 'auto'
-            self._cam.shutter_speed = 0
+        self._cam.awb_mode = 'auto'
         self._cam.vflip = True
         self._cam.hflip = True
 
@@ -90,12 +80,12 @@ class Camera:
         # img = self._cam.get_image()
         # imgstr = pygame.image.tostring(img, "RGB", False)
         # pimg = Image.frombytes("RGB", img.get_size(), imgstr)
-        with io.BytesIO() as stream:
-            self._camcamera.capture_continuous(stream, 'jpeg')
+        stream = io.BytesIO()
+        for _ in self._cam.capture_continuous(stream, 'jpeg', use_video_port=True):
             # pimg.save(stream, "JPEG", quality=self.quality, optimize=True)
             stream.seek(0)
-            yield stream.getvalue()
-            # yield stream.read()
+            #yield stream.getvalue()
+            yield stream.read()
 
             # reset stream for next frame
             stream.seek(0)
@@ -119,7 +109,7 @@ class ImageWebSocket(tornado.websocket.WebSocketHandler):
         camera.request_start()
 
     def on_message(self, message):
-        jpeg_bytes = camera.get_jpeg_image_bytes()
+        jpeg_bytes = next(camera.get_jpeg_image_bytes())
         self.write_message(jpeg_bytes, binary=True)
 
     def on_close(self):
