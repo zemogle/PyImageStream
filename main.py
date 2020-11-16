@@ -33,9 +33,6 @@ class Camera:
 
     def __init__(self, index, width, height, quality, stopdelay):
         print("Initializing camera...")
-        # pygame.camera.init()
-        # camera_name = pygame.camera.list_cameras()[index]
-        # self._cam = pygame.camera.Camera(camera_name, (width, height
         resolution = f"{width}x{height}"
         self._cam = picamera.PiCamera(resolution=resolution, framerate=10)
         print("Camera initialized")
@@ -79,9 +76,6 @@ class Camera:
             self.stop_requested = False
 
     def get_jpeg_image_bytes(self):
-        # img = self._cam.get_image()
-        # imgstr = pygame.image.tostring(img, "RGB", False)
-        # pimg = Image.frombytes("RGB", img.get_size(), imgstr)
         stream = io.BytesIO()
         for _ in self._cam.capture_continuous(stream, 'jpeg', use_video_port=True):
             # pimg.save(stream, "JPEG", quality=self.quality, optimize=True)
@@ -92,10 +86,6 @@ class Camera:
             # reset stream for next frame
             stream.seek(0)
             stream.truncate()
-
-
-
-camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay)
 
 
 class ImageWebSocket(tornado.websocket.WebSocketHandler):
@@ -120,16 +110,18 @@ class ImageWebSocket(tornado.websocket.WebSocketHandler):
         if len(ImageWebSocket.clients) == 0:
             camera.request_stop()
 
+if __name__ == '__main__':
+    camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay)
 
-script_path = os.path.dirname(os.path.realpath(__file__))
-static_path = script_path + '/static/'
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    static_path = script_path + '/static/'
 
-app = tornado.web.Application([
-        (r"/websocket", ImageWebSocket),
-        (r"/(.*)", tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
-    ])
-app.listen(args.port)
+    app = tornado.web.Application([
+            (r"/websocket", ImageWebSocket),
+            (r"/(.*)", tornado.web.StaticFileHandler, {'path': static_path, 'default_filename': 'index.html'}),
+        ])
+    app.listen(args.port)
 
-print("Starting server: http://localhost:" + str(args.port) + "/")
+    print("Starting server: http://localhost:" + str(args.port) + "/")
 
-tornado.ioloop.IOLoop.current().start()
+    tornado.ioloop.IOLoop.current().start()
