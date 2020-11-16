@@ -20,6 +20,8 @@ parser.add_argument('--camera', default=0, type=int, help='Camera index, first c
 parser.add_argument('--width', default=640, type=int, help='Width (default: 640)')
 parser.add_argument('--height', default=480, type=int, help='Height (default: 480)')
 parser.add_argument('--quality', default=70, type=int, help='JPEG Quality 1 (worst) to 100 (best) (default: 70)')
+parser.add_argument('--hflip', default=False, action='store_true', help='Flip image in the horizontal direction')
+parser.add_argument('--vflip', default=False, action='store_true', help='Flip image in the vertical direction')
 parser.add_argument('--stopdelay', default=7, type=int, help='Delay in seconds before the camera will be stopped after '
                                                              'all clients have disconnected (default: 7)')
 args = parser.parse_args()
@@ -28,14 +30,31 @@ class Camera:
 
     def __init__(self, index, width, height, quality, stopdelay):
         print("Initializing camera...")
-        pygame.camera.init()
-        camera_name = pygame.camera.list_cameras()[index]
-        self._cam = pygame.camera.Camera(camera_name, (width, height))
+        # pygame.camera.init()
+        # camera_name = pygame.camera.list_cameras()[index]
+        # self._cam = pygame.camera.Camera(camera_name, (width, height
+        resolution = f"{width}x{height}"
+        self._cam = picamera.PiCamera(resolution=resolution, framerate=10)
         print("Camera initialized")
         self.is_started = False
         self.stop_requested = False
         self.quality = quality
         self.stopdelay = stopdelay
+        time.sleep(2)
+        if datetime.now().hour > 11 or datetime.now().hour < 15:
+            self._cam.iso = 800
+            self._cam.exposure_mode = 'night'
+            self._cam.awb_mode = 'auto'
+            # self._cam.awb_gains = (Fraction(19, 16), Fraction(143, 128))
+            self._cam.shutter_speed = 400000
+        else:
+            self._cam.iso = 100
+            self._cam.exposure_mode = 'auto'
+            self._cam.awb_mode = 'auto'
+            self._cam.shutter_speed = 0
+        self._cam.vflip = True
+        self._cam.hflip = True
+
 
     def request_start(self):
         if self.stop_requested:
@@ -59,18 +78,26 @@ class Camera:
     def _stop(self):
         if self.stop_requested:
             print("Stopping camera now...")
-            self._cam.stop()
+            self._cam.close()
             print("Camera stopped")
             self.is_started = False
             self.stop_requested = False
 
     def get_jpeg_image_bytes(self):
-        img = self._cam.get_image()
-        imgstr = pygame.image.tostring(img, "RGB", False)
-        pimg = Image.frombytes("RGB", img.get_size(), imgstr)
-        with io.BytesIO() as bytesIO:
-            pimg.save(bytesIO, "JPEG", quality=self.quality, optimize=True)
-            return bytesIO.getvalue()
+        # img = self._cam.get_image()
+        # imgstr = pygame.image.tostring(img, "RGB", False)
+        # pimg = Image.frombytes("RGB", img.get_size(), imgstr)
+        with io.BytesIO() as stream:
+            self._camcamera.capture_continuous(stream, 'jpeg')
+            # pimg.save(stream, "JPEG", quality=self.quality, optimize=True)
+            stream.seek(0)
+            yield stream.getvalue()
+            # yield stream.read()
+
+            # reset stream for next frame
+            stream.seek(0)
+            stream.truncate()
+
 
 
 camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay)
