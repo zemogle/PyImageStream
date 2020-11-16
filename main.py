@@ -44,8 +44,8 @@ class Camera:
         self._cam.iso = 800
         self._cam.awb_mode = 'auto'
         self._cam.exposure_mode = 'night'
-        self._cam.vflip = True
-        self._cam.hflip = True
+        self._cam.vflip = vflip
+        self._cam.hflip = hflip
 
 
     def request_start(self):
@@ -111,7 +111,7 @@ class ImageWebSocket(tornado.websocket.WebSocketHandler):
             camera.request_stop()
 
 if __name__ == '__main__':
-    camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay)
+    camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay, args.hflip, args.vflip)
 
     script_path = os.path.dirname(os.path.realpath(__file__))
     static_path = script_path + '/static/'
