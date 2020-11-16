@@ -4,7 +4,7 @@ import argparse
 import os
 import io
 import time
-import datetime
+from datetime import datetime
 
 import tornado.ioloop
 import tornado.web
