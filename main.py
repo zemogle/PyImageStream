@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 class Camera:
 
-    def __init__(self, index, width, height, quality, stopdelay):
+    def __init__(self, index, width, height, quality, stopdelay, hflip, vflip):
         print("Initializing camera...")
         resolution = f"{width}x{height}"
         self._cam = picamera.PiCamera(resolution=resolution, framerate=10)
