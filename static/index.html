@@ -5,31 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Gomez CCTV">
     <title>BabyCam</title>
+    <link rel="stylesheet" href="bulma.min.css">
     <script type="text/javascript" src="performance-polyfill.js"></script>
     <script type="text/javascript" src="endswith.js"></script>
     <script type="text/javascript" src="client.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-4ZPLezkTZTsojWFhpdFembdzFudphhoOzIunR1wH6g1WQDzCAiPvDyitaK67mp0+" crossorigin="anonymous">
 </head>
 <html>
- <head>
  <body>
-   <div>
-    <div class="header">
-        <div class="pure-menu pure-menu-horizontal">
-            <div class="pure-menu-heading" href="">BabyCam</div>
-
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item pure-menu-selected"><a href="#" class="pure-menu-link">Home</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Blog</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">About</a></li>
-            </ul>
+   <section class="section">
+    <div class="container">
+      <h1 class="title">
+        BabyCam
+      </h1>
+      <p>
+        <img id="liveImg" />
+        <div class="tags has-addons">
+          <span class="tag is-primary">Alex Smith</span>
+          <span class="tag" id="fps"></span>
         </div>
+      </p>
     </div>
-    <div class="pure-g">
-         <div class="photo-box pure-u-1">
-            <img id="liveImg" />
-          </div>
-    </div>
-  </div>
  </body>
 </html>
