@@ -34,18 +34,11 @@ class Camera:
     def __init__(self, index, width, height, quality, stopdelay, hflip, vflip):
         print("Initializing camera...")
         resolution = f"{width}x{height}"
-        self._cam = picamera.PiCamera(resolution=resolution, framerate=10)
         print("Camera initialized")
         self.is_started = False
         self.stop_requested = False
         self.quality = quality
         self.stopdelay = stopdelay
-        time.sleep(2)
-        self._cam.iso = 800
-        self._cam.awb_mode = 'auto'
-        self._cam.exposure_mode = 'night'
-        self._cam.vflip = vflip
-        self._cam.hflip = hflip
 
 
     def request_start(self):
@@ -63,7 +56,13 @@ class Camera:
 
     def _start(self):
         print("Starting camera...")
-        #self._cam.start()
+        self._cam = picamera.PiCamera(resolution=resolution, framerate=10)
+        time.sleep(2)
+        self._cam.iso = 800
+        self._cam.awb_mode = 'auto'
+        self._cam.exposure_mode = 'night'
+        self._cam.vflip = vflip
+        self._cam.hflip = hflip
         print("Camera started")
         self.is_started = True
 
