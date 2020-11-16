@@ -44,7 +44,9 @@ class Camera:
         self.quality = quality
         self.stopdelay = stopdelay
         time.sleep(2)
+        self._cam.iso = 800
         self._cam.awb_mode = 'auto'
+        self._cam.exposure_mode = 'night'
         self._cam.vflip = True
         self._cam.hflip = True
 
