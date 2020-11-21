@@ -63,7 +63,7 @@ class Camera:
         self._cam = picamera.PiCamera(resolution=self.resolution, framerate=10)
         time.sleep(2)
         self._cam.iso = 800
-        if self._cam.grey:
+        if self.grey:
             self._cam.awb_mode = 'greyworld'
         else:
             self._cam.awb_mode = 'auto'
