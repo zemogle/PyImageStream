@@ -64,7 +64,7 @@ class Camera:
         time.sleep(2)
         self._cam.iso = 800
         if self.grey:
-            self._cam.awb_mode = 'greyworld'
+            self._cam.awb_mode = 'cloud'
         else:
             self._cam.awb_mode = 'auto'
         self._cam.exposure_mode = 'night'
