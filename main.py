@@ -25,13 +25,14 @@ parser.add_argument('--height', default=480, type=int, help='Height (default: 48
 parser.add_argument('--quality', default=70, type=int, help='JPEG Quality 1 (worst) to 100 (best) (default: 70)')
 parser.add_argument('--hflip', default=False, action='store_true', help='Flip image in the horizontal direction')
 parser.add_argument('--vflip', default=False, action='store_true', help='Flip image in the vertical direction')
+parser.add_argument('--greyworld', default=False, action='store_true', help='Stop the images being pink')
 parser.add_argument('--stopdelay', default=7, type=int, help='Delay in seconds before the camera will be stopped after '
                                                              'all clients have disconnected (default: 7)')
 args = parser.parse_args()
 
 class Camera:
 
-    def __init__(self, index, width, height, quality, stopdelay, hflip, vflip):
+    def __init__(self, index, width, height, quality, stopdelay, hflip, vflip, greyworld):
         print("Initializing camera...")
         self.resolution = f"{width}x{height}"
         print("Camera initialized")
@@ -41,6 +42,7 @@ class Camera:
         self.stopdelay = stopdelay
         self.vflip = vflip
         self.hflip = hflip
+        self.grey = greyworld
 
 
     def request_start(self):
@@ -61,7 +63,10 @@ class Camera:
         self._cam = picamera.PiCamera(resolution=self.resolution, framerate=10)
         time.sleep(2)
         self._cam.iso = 800
-        self._cam.awb_mode = 'auto'
+        if self._cam.grey:
+            self._cam.awb_mode = 'greyworld'
+        else:
+            self._cam.awb_mode = 'auto'
         self._cam.exposure_mode = 'night'
         self._cam.vflip = self.vflip
         self._cam.hflip = self.hflip
@@ -112,7 +117,7 @@ class ImageWebSocket(tornado.websocket.WebSocketHandler):
             camera.request_stop()
 
 if __name__ == '__main__':
-    camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay, args.hflip, args.vflip)
+    camera = Camera(args.camera, args.width, args.height, args.quality, args.stopdelay, args.hflip, args.vflip, args.greyworld)
 
     script_path = os.path.dirname(os.path.realpath(__file__))
     static_path = script_path + '/static/'
